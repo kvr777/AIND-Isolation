@@ -43,7 +43,7 @@ def custom_score(game, player):
         return float("inf")
 
     #To select heuristic
-    selected_score = 1
+    selected_score = 2
 
     # improved_score
     if selected_score==1:
@@ -200,12 +200,11 @@ class CustomPlayer:
         #get legal moves
 
         legal_moves = game.get_legal_moves()
-
-
+        best_move = (-1, -1)
 
         #Return (-1, -1) for no legal moves
         if len(legal_moves)==0 or depth==0:
-            return self.score(game,self), (-1,-1)
+            return self.score(game,self), best_move
 
         # Iterative minimax search according to AIMA algorithm
         if maximizing_player:
@@ -266,11 +265,13 @@ class CustomPlayer:
 
         legal_moves = game.get_legal_moves()
 
+        best_move = (-1,-1)
+
 
 
         #Return (-1, -1) for no legal moves
         if len(legal_moves)==0 or depth==0:
-            return self.score(game,self), (-1,-1)
+            return self.score(game,self), best_move
 
         # Iterative alphabeta search according to AIMA algorithm
         if maximizing_player:
