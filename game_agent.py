@@ -156,7 +156,7 @@ class CustomPlayer:
                     _, move = self.minimax(game, depth)
                 else:
                     if self.method == 'alphabeta':
-                        _, move = self.alphabeta(game, iter_depth)
+                        _, move = self.alphabeta(game, depth)
 
                 if not self.iterative:
                     return move
@@ -284,6 +284,7 @@ class CustomPlayer:
                     best_move = move
                     alpha = max(alpha, best_value)
             return best_value, best_move
+
         else:
             best_value = float('inf')
             for move in legal_moves:
