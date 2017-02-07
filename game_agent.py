@@ -43,16 +43,23 @@ def custom_score(game, player):
         return float("inf")
 
     #To select heuristic
-    selected_score = 2
+    selected_score = 3
 
     # improved_score
     if selected_score==1:
         own_moves = len(game.get_legal_moves(player))
         opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
         return float(own_moves - opp_moves)
+
     # open_move_score
     elif selected_score==2:
         return float(len(game.get_legal_moves(player)))
+
+    # improved_score as it described in lecture
+    elif selected_score==3:
+        own_moves = len(game.get_legal_moves(player))
+        opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+        return float(own_moves - 2*opp_moves)
 
 class CustomPlayer:
     """Game-playing agent that chooses a move using your evaluation function
@@ -130,10 +137,10 @@ class CustomPlayer:
         """
 
         self.time_left = time_left
-
+        move = (-1, -1)
         # Return (-1, -1) for no legal moves
         if len(legal_moves) == 0:
-            return (-1, -1)
+            return move
 
         # TODO: finish this function!
 
@@ -147,11 +154,14 @@ class CustomPlayer:
             # automatically catch the exception raised by the search method
             # when the timer gets close to expiring
 
+            # initialize time margin in ms to o leave some time for the function to return
+            time_margin = 50
+
             if self.iterative:
                 depth=1
             else: depth = self.search_depth
 
-            while self.time_left()>0:
+            while self.time_left()>time_margin:
                 if self.method == 'minimax':
                     _, move = self.minimax(game, depth)
                 else:
