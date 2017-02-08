@@ -43,23 +43,25 @@ def custom_score(game, player):
         return float("inf")
 
     #To select heuristic
-    selected_score = 3
+    selected_score = 2
 
-    # improved_score
+    # weighted improved_score as it described in lecture
     if selected_score==1:
         own_moves = len(game.get_legal_moves(player))
         opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
-        return float(own_moves - opp_moves)
+        return float(own_moves - 2*opp_moves)
 
-    # open_move_score
+    # additional heuristic with
     elif selected_score==2:
-        return float(len(game.get_legal_moves(player)))
-
-    # improved_score as it described in lecture
-    elif selected_score==3:
         own_moves = len(game.get_legal_moves(player))
         opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
-        return float(own_moves - 2*opp_moves)
+        game_deep_ratio = float(len(game.get_blank_spaces())/(game.width*game.height*1.0))
+        center_w=game.width/2.0
+        center_h=game.height/2.0
+        current_loc= game.get_player_location(player)
+        coeff= 1 /(game_deep_ratio**2)
+        proximity_to_center = abs(current_loc[0]-center_h) + abs(current_loc[1]-center_w)
+        return float(own_moves - 3*opp_moves*coeff - 3*proximity_to_center/coeff)
 
 class CustomPlayer:
     """Game-playing agent that chooses a move using your evaluation function
@@ -288,8 +290,10 @@ class CustomPlayer:
             best_value = float('-inf')
             for move in legal_moves:
                 v,_ = self.alphabeta(game.forecast_move(move), depth - 1,alpha, beta, False)
+                #find the nodes we can cut-off
                 if v >= beta:
                     return v, move
+                #otherwise update best values
                 if v>= best_value:
                     best_value=v
                     best_move = move
@@ -300,8 +304,10 @@ class CustomPlayer:
             best_value = float('inf')
             for move in legal_moves:
                 v, _ = self.alphabeta(game.forecast_move(move), depth - 1, alpha, beta, True)
+                # find the nodes we can cut-off
                 if v <= alpha:
                     return v, move
+                # otherwise update best values
                 if v < best_value:
                     best_value = v
                     best_move = move
