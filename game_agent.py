@@ -46,7 +46,7 @@ def custom_score(game, player):
         return float("inf")
 
     #To select heuristic
-    selected_score = 2
+    selected_score = 3
 
     # weighted improved_score as it described in lecture
     if selected_score==1:
@@ -54,8 +54,16 @@ def custom_score(game, player):
         opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
         return float(own_moves - 2*opp_moves)
 
-    # additional heuristic with
-    elif selected_score==2:
+    # weighted improved_score with variable weight depending on game state
+    if selected_score==2:
+        own_moves = len(game.get_legal_moves(player))
+        opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+        game_deep_ratio = float(len(game.get_blank_spaces()) / (game.width * game.height * 1.0))
+        coeff = 1 / (game_deep_ratio ** 2)
+        return float(own_moves - 2 * opp_moves * coeff )
+
+    # weighted improved_score with variables weight and location priority depending on game state
+    elif selected_score==3:
         own_moves = len(game.get_legal_moves(player))
         opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
         game_deep_ratio = float(len(game.get_blank_spaces())/(game.width*game.height*1.0))
@@ -218,7 +226,7 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
-        #get legal moves
+        #get legal moves and initialize best move
 
         legal_moves = game.get_legal_moves()
         best_move = (-1, -1)
@@ -288,7 +296,7 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
-        #get legal moves
+        # get legal moves and initialize best move
 
         legal_moves = game.get_legal_moves()
 
